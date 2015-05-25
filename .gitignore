@@ -1,0 +1,27 @@
+# XeLaTeX build files
+# Generated output
+*.aux
+*.bbl
+*.blg
+*.eps
+*.log
+*.nav
+*.out
+*.pdf
+*.png
+*.pre
+*.sagetex.py
+*.sagetex.sage
+*.sagetex.scmd
+*.sagetex.sout
+*.snm
+*.synctex.gz
+*.toc
+*-[1-9].asy
+
+# Backup files
+*~
+.*.swp
+# System files
+.DS_Store
+

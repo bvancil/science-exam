@@ -1,0 +1,98 @@
+%!TEX TS-program = sage+XeLaTeX
+\documentclass[12pt]{article}
+\usepackage[letterpaper,twoside,margin=1cm,bindingoffset=1cm,]{geometry}
+
+%\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{eso-pic}
+\usepackage{pgf,pgffor}
+\usepackage{tikz}
+\usepackage{sagetex}
+\nofiles
+
+\usepackage{fontspec,xltxtra,xunicode}
+\defaultfontfeatures{Mapping=tex-text}
+\setromanfont[Mapping=tex-text]{Gentium Book Basic}
+\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{Josefin Sans}
+\setmonofont[Scale=MatchLowercase]{Consolas}
+
+%%%%%%%%%%%%%% 
+% Put your info here
+\newcommand\Names{Emmy N\"oether, Maria Goeppert, Chien-Shiung Wu}
+\newcommand\Field{Quiz on Calculating with Units, Unit Conversions}
+\newcommand\Course{Natural Science}
+\newcommand\Date{Marchtember 41, 2301} % use \today for auto-dating
+%%%%%%%%%%%%%%
+
+\pagestyle{empty}
+
+\begin{document}
+% Numerical context for Wind Turbine problem
+\begin{sagesilent}
+ v=0
+ P=0
+ P_in_kW=0
+ def reset_windturbine():
+     global v
+     global P
+     global P_in_kW
+     global P_display
+     v = RealDistribution('uniform', [8,22]).get_random_element()
+     P = 0.2*v^3
+     P_in_kW = round(P/1000,2)
+     P = round(P_in_kW * 1000)
+     v = round((P/.2)^(1/3),1) 	
+     return ''
+\end{sagesilent}
+
+% Create different version of exam for each student:
+\foreach \name in \Names {%
+% Graph paper in background
+% Letter page size is 215.9 mm x 279.4 mm
+% The grid doesn't align properly, currently.
+% TODO: Fix grid to be more intuitive
+% TODO: Store plots once. This creates each tikzpicture, sage calculation for each student, which can take a long time for 130 students.
+\begin{tikzpicture}[remember picture, overlay, shift=(current page.south west)]
+	\draw[step=1cm,lightgray,thin] (-2cm,-26cm) grid ++(20cm,27cm);
+\end{tikzpicture}%
+
+% Exam Heading
+{\sffamily %
+	\noindent {\large \name } \hfill \Date
+	
+	\noindent \Field \hfill \Course}
+\vspace{1cm}
+
+\noindent Problem:
+% Easier to start backward with wind speed in mph
+% Note that including comments with # in the code below will lead to a pgffor error.
+% Placing sage verbatim environment within pgffor argument results in errors.  One can add ^^J to the end of each line or put the results in a LaTeX savebox
+
+\sagestr{reset_windturbine()}Students study the wind turbine they have selected to mount on the top of their school. Between average wind speeds of 8~mph and 22~mph, the Skystream 3.7's power output is proportional to the cube of the steady wind speed and can be modeled by the equation $P=(0.2\,\text{W mph}^{-3}) v^3$, where $P$ represents the power in watts (W) and $v$ represents the steady wind speed in miles per hour (mph). At what wind speed will the wind turbine produce \sage{P_in_kW} kilowatts of electricity?
+
+\newpage 
+% Solution Heading
+{\sffamily %
+	\noindent {\large \name } \hfill \Date
+	
+	\noindent Solutions to \Field \hfill \Course}
+\vspace{1cm}
+
+\sageplot[width=.9\textwidth]{plot(0.2*x^3, x, 8, 22, title='Electrical Power Output For Skystream 3.7 v. Steady Wind Speed', axes_labels=['$v$ / mph','$P$ / W'], gridlines=True)}
+
+\begin{align*}
+P					&=(0.2\,\text{W mph}^{-3}) v^3 \\
+\sage{P_in_kW}\,\text{kW}  	&=(0.2\,\text{W mph}^{-3}) v^3 \\
+\sage{P}\,\text{W}  	&=(0.2\,\text{W mph}^{-3}) v^3 \\
+\sage{round(P/0.2)}\,\text{mph}^3 	&=v^3 \\
+\sage{v}\,\text{mph}	&\approx v
+\end{align*}
+As a check on our work, notice that \sage{v}~mph is between 8~mph and 22~mph, when our model is valid, so we conclude that a wind blowing steadily at about \sage{v}~mph would generate \sage{P_in_kW}~kW of electricity.
+
+\vfill
+\eject
+\newpage
+} % end foreach
+
+\end{document}
