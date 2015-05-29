@@ -1,0 +1,27 @@
+% Requires xparse, math,fpu from pgf/tikz, sagetex, amsmath
+\DeclareDocumentCommand \problemWindTurbineArg { o m }{% power in kilowatts
+% Range of power is 0.2 kW to 2.1 kW
+% Prepare problem context
+\tikzmath{
+	\P{in kW} = #2;
+	\P{in W} = \P{in kW}*1000;
+	\v{cubed} = \P{in W}/0.2;
+	\v{in mph} = pow(\v{cubed},1.0/3.0);
+} 
+% Output problem
+??\pgfkeys{/pgf/fpu,/pgf/fpu/output format=fixed}
+Students study the wind turbine they have selected to mount on the top of their school. Between average wind speeds of 8~mph and 22~mph, the Skystream 3.7's power output is proportional to the cube of the steady wind speed and can be modeled by the equation $P=(0.2\,\text{W mph}^{-3}) v^3$, where $P$ represents the power in watts (W) and $v$ represents the steady wind speed in miles per hour (mph). At what wind speed will the wind turbine produce \pgfkeys{/pgf/number format/precision=1}\pgfmathroundtozerofill{\P{in kW}}\pgfmathresult~kilowatts of electricity?
+\IfNoValueTF {#1} {}{% Output solution
+\solution
+\sageplot[width=.9\textwidth]{plot(0.2*x^3, x, 8, 22, title='Electrical Power Output For Skystream 3.7 v. Steady Wind Speed', axes_labels=['$v$ / mph','$P$ / W'], gridlines=True)}
+
+\begin{align*}
+P					&=(0.2\,\text{W mph}^{-3}) v^3 \\
+\pgfkeys{/pgf/number format/precision=1}\pgfmathroundtozerofill{\P{in kW}}\pgfmathresult\,\text{kW}  	&=(0.2\,\text{W mph}^{-3}) v^3 \\
+\pgfkeys{/pgf/number format/precision=0}\pgfmathroundtozerofill{\P{in W}}\pgfmathresult\,\text{W}  	&=(0.2\,\text{W mph}^{-3}) v^3 \\
+\pgfkeys{/pgf/number format/precision=0}\pgfmathroundtozerofill{\v{cubed}}\pgfmathresult\,\text{mph}^3 	&=v^3 \\
+\pgfkeys{/pgf/number format/precision=1}\pgfmathroundtozerofill{\v{in mph}}\pgfmathresult\,\text{mph}	&\approx v
+\end{align*}
+As a check on our work, notice that \pgfkeys{/pgf/number format/precision=1}\pgfmathroundtozerofill{\v{in mph}}\pgfmathresult~mph is between 8~mph and 22~mph, when our model is valid, so we conclude that a wind blowing steadily at about \pgfkeys{/pgf/number format/precision=1}\pgfmathroundtozerofill{\v{in mph}}\pgfmathresult~mph would generate \pgfkeys{/pgf/number format/precision=2}\pgfmathparse{0.2*(\pgfmathresult)^3/1000}\pgfmathroundtozerofill{\pgfmathresult}\pgfmathresult~kW of electricity, which is close to the quantity of \pgfkeys{/pgf/number format/precision=1}\pgfmathroundtozerofill{\P{in kW}}\pgfmathresult~kW of electricity in the problem.
+}
+}

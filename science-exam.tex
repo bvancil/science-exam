@@ -8,6 +8,9 @@
 \usepackage{eso-pic}
 \usepackage{pgf,pgffor}
 \usepackage{tikz}
+\usetikzlibrary{fpu}
+\usetikzlibrary{math}
+\usepackage{xparse}
 \usepackage{sagetex}
 \nofiles
 
@@ -25,26 +28,14 @@
 \newcommand\Date{Marchtember 41, 2301} % use \today for auto-dating
 %%%%%%%%%%%%%%
 
+\newcommand{\solution}{\textsf{(Solution)}\par}
+
 \pagestyle{empty}
 
+% Problems:
+\input{sample_problems.tex}
+
 \begin{document}
-% Numerical context for Wind Turbine problem
-\begin{sagesilent}
- v=0
- P=0
- P_in_kW=0
- def reset_windturbine():
-     global v
-     global P
-     global P_in_kW
-     global P_display
-     v = RealDistribution('uniform', [8,22]).get_random_element()
-     P = 0.2*v^3
-     P_in_kW = round(P/1000,2)
-     P = round(P_in_kW * 1000)
-     v = round((P/.2)^(1/3),1) 	
-     return ''
-\end{sagesilent}
 
 % Create different version of exam for each student:
 \foreach \name in \Names {%
@@ -69,7 +60,7 @@
 % Note that including comments with # in the code below will lead to a pgffor error.
 % Placing sage verbatim environment within pgffor argument results in errors.  One can add ^^J to the end of each line or put the results in a LaTeX savebox
 
-\sagestr{reset_windturbine()}Students study the wind turbine they have selected to mount on the top of their school. Between average wind speeds of 8~mph and 22~mph, the Skystream 3.7's power output is proportional to the cube of the steady wind speed and can be modeled by the equation $P=(0.2\,\text{W mph}^{-3}) v^3$, where $P$ represents the power in watts (W) and $v$ represents the steady wind speed in miles per hour (mph). At what wind speed will the wind turbine produce \sage{P_in_kW} kilowatts of electricity?
+\problemWindTurbineArg{1.0}
 
 \newpage 
 % Solution Heading
@@ -79,16 +70,7 @@
 	\noindent Solutions to \Field \hfill \Course}
 \vspace{1cm}
 
-\sageplot[width=.9\textwidth]{plot(0.2*x^3, x, 8, 22, title='Electrical Power Output For Skystream 3.7 v. Steady Wind Speed', axes_labels=['$v$ / mph','$P$ / W'], gridlines=True)}
-
-\begin{align*}
-P					&=(0.2\,\text{W mph}^{-3}) v^3 \\
-\sage{P_in_kW}\,\text{kW}  	&=(0.2\,\text{W mph}^{-3}) v^3 \\
-\sage{P}\,\text{W}  	&=(0.2\,\text{W mph}^{-3}) v^3 \\
-\sage{round(P/0.2)}\,\text{mph}^3 	&=v^3 \\
-\sage{v}\,\text{mph}	&\approx v
-\end{align*}
-As a check on our work, notice that \sage{v}~mph is between 8~mph and 22~mph, when our model is valid, so we conclude that a wind blowing steadily at about \sage{v}~mph would generate \sage{P_in_kW}~kW of electricity.
+\problemWindTurbineArg[solution]{1.0}
 
 \vfill
 \eject
